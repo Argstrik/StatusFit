@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AnimeFit Web RPG</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Login/Signup Screen -->
+    <div id="auth-screen" class="screen">
+        <div class="auth-box">
+            <h1>AnimeFit RPG</h1>
+            <input type="text" id="username" placeholder="Name">
+            <input type="number" id="weight" placeholder="Weight (kg)">
+            <button onclick="signup()">Start Journey</button>
+        </div>
+    </div>
+
+    <!-- Main App (Hidden Initially) -->
+    <div id="app" class="screen" style="display:none;">
+        <!-- Navbar -->
+        <div class="navbar">
+            <button onclick="showTab('status')"><i class="fas fa-user"></i></button>
+            <button onclick="showTab('quests')"><i class="fas fa-tasks"></i></button>
+            <button onclick="showTab('progress')"><i class="fas fa-chart-line"></i></button>
+            <button onclick="showTab('leaderboard')"><i class="fas fa-trophy"></i></button>
+        </div>
+
+        <!-- Status Window -->
+        <div id="status" class="tab">
+            <div class="animated-bg"></div>
+            <div class="stat-box">
+                <h1 id="user-name">Loading...</h1>
+                <h2>Weight: <span id="user-weight">50</span>kg</h2>
+                <div class="stats">
+                    <p>💪 Strength: <span id="strength">0</span></p>
+                    <p>🏃 Endurance: <span id="endurance">0</span></p>
+                    <p>⚡ Agility: <span id="agility">0</span></p>
+                </div>
+                <div id="constellation" class="rarity-common">
+                    <i class="fas fa-star"></i> Constellation: Calculating...
+                </div>
+            </div>
+        </div>
+
+        <!-- Quests -->
+        <div id="quests" class="tab" style="display:none;">
+            <h1>Daily Quests</h1>
+            <div id="quest-list"></div>
+        </div>
+
+        <!-- Progress Report -->
+        <div id="progress" class="tab" style="display:none;">
+            <h1>Weekly Progress</h1>
+            <canvas id="progress-chart"></canvas>
+        </div>
+
+        <!-- Leaderboard -->
+        <div id="leaderboard" class="tab" style="display:none;">
+            <h1>Leaderboard</h1>
+            <div id="leaderboard-list"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
