@@ -1,44 +1,73 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>AnimeFit Web RPG</title>
+    <title>AnimeFit RPG</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Login/Signup Screen -->
+    <!-- Auth Screen -->
     <div id="auth-screen" class="screen">
         <div class="auth-box">
-            <h1>AnimeFit RPG</h1>
-            <input type="text" id="username" placeholder="Name">
-            <input type="number" id="weight" placeholder="Weight (kg)">
-            <button onclick="signup()">Start Journey</button>
+            <h1><i class="fas fa-dragon"></i> AnimeFit RPG</h1>
+            <div class="input-group">
+                <input type="text" id="username" placeholder="Your Hero Name">
+                <input type="number" id="weight" placeholder="Weight (kg)">
+            </div>
+            
+            <div class="exercise-selector">
+                <h3><i class="fas fa-dumbbell"></i> Your Powers</h3>
+                <div class="search-box">
+                    <input type="text" id="exercise-search" placeholder="Search moves..." 
+                           onkeyup="filterExercises()">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div id="exercise-list"></div>
+                <div id="selected-exercises"></div>
+            </div>
+
+            <button class="glow-btn" onclick="signup()">
+                <i class="fas fa-fist-raised"></i> Begin Training
+            </button>
         </div>
     </div>
 
-    <!-- Main App (Hidden Initially) -->
+    <!-- Main App -->
     <div id="app" class="screen" style="display:none;">
+        <!-- Animated Background -->
+        <div class="animated-bg"></div>
+        
         <!-- Navbar -->
         <div class="navbar">
-            <button onclick="showTab('status')"><i class="fas fa-user"></i></button>
-            <button onclick="showTab('quests')"><i class="fas fa-tasks"></i></button>
-            <button onclick="showTab('progress')"><i class="fas fa-chart-line"></i></button>
-            <button onclick="showTab('leaderboard')"><i class="fas fa-trophy"></i></button>
+            <button class="nav-btn" onclick="showTab('status')"><i class="fas fa-user-ninja"></i></button>
+            <button class="nav-btn" onclick="showTab('quests')"><i class="fas fa-tasks"></i></button>
+            <button class="nav-btn" onclick="showTab('progress')"><i class="fas fa-chart-line"></i></button>
+            <button class="nav-btn" onclick="showTab('leaderboard')"><i class="fas fa-trophy"></i></button>
         </div>
 
         <!-- Status Window -->
         <div id="status" class="tab">
-            <div class="animated-bg"></div>
-            <div class="stat-box">
-                <h1 id="user-name">Loading...</h1>
-                <h2>Weight: <span id="user-weight">50</span>kg</h2>
-                <div class="stats">
-                    <p>💪 Strength: <span id="strength">0</span></p>
-                    <p>🏃 Endurance: <span id="endurance">0</span></p>
-                    <p>⚡ Agility: <span id="agility">0</span></p>
+            <div class="hero-card">
+                <div class="hero-header">
+                    <h1 id="user-name">Loading...</h1>
+                    <div class="rarity-badge" id="rarity-badge">Common</div>
                 </div>
-                <div id="constellation" class="rarity-common">
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-hand-rock"></i>
+                        <h3>Strength <span id="strength">0</span></h3>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-bolt"></i>
+                        <h3>Agility <span id="agility">0</span></h3>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-infinity"></i>
+                        <h3>Endurance <span id="endurance">0</span></h3>
+                    </div>
+                </div>
+                <div class="constellation-card" id="constellation">
                     <i class="fas fa-star"></i> Constellation: Calculating...
                 </div>
             </div>
@@ -46,20 +75,25 @@
 
         <!-- Quests -->
         <div id="quests" class="tab" style="display:none;">
-            <h1>Daily Quests</h1>
-            <div id="quest-list"></div>
+            <div class="quest-board">
+                <h1><i class="fas fa-scroll"></i> Daily Trials</h1>
+                <div id="active-quests"></div>
+            </div>
         </div>
 
-        <!-- Progress Report -->
+        <!-- Progress -->
         <div id="progress" class="tab" style="display:none;">
-            <h1>Weekly Progress</h1>
-            <canvas id="progress-chart"></canvas>
+            <div class="chart-container">
+                <canvas id="progress-chart"></canvas>
+            </div>
         </div>
 
         <!-- Leaderboard -->
         <div id="leaderboard" class="tab" style="display:none;">
-            <h1>Leaderboard</h1>
-            <div id="leaderboard-list"></div>
+            <div class="leaderboard-table">
+                <h1><i class="fas fa-crown"></i> Hall of Heroes</h1>
+                <div id="leaderboard-list"></div>
+            </div>
         </div>
     </div>
 
