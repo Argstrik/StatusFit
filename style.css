@@ -1,4 +1,10 @@
-/* Base Styles */
+/* style.css */
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2c3e50;
+    --bg-gradient: linear-gradient(145deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -7,12 +13,13 @@
 
 body {
     font-family: 'Arial', sans-serif;
-    background: #0a0a0a;
+    background: var(--bg-gradient);
     color: white;
     overflow-x: hidden;
+    transition: background 0.5s ease;
 }
 
-/* Auth Screen */
+/* Auth Screen Styles */
 .auth-box {
     background: rgba(0,0,0,0.9);
     padding: 2rem;
@@ -23,44 +30,7 @@ body {
     box-shadow: 0 0 20px rgba(255,255,255,0.1);
 }
 
-.input-group input {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    background: #1a1a1a;
-    border: 2px solid #333;
-    color: white;
-    border-radius: 8px;
-    font-size: 16px;
-}
-
 /* Exercise Selector */
-.exercise-selector {
-    margin: 2rem 0;
-}
-
-.search-box {
-    position: relative;
-    margin: 1rem 0;
-}
-
-#exercise-search {
-    width: 100%;
-    padding: 12px 40px 12px 20px;
-    background: #1a1a1a;
-    border: 2px solid #333;
-    color: white;
-    border-radius: 8px;
-}
-
-.fa-search {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #666;
-}
-
 #exercise-list {
     max-height: 200px;
     overflow-y: auto;
@@ -76,21 +46,6 @@ body {
     transition: all 0.3s;
 }
 
-.exercise-item:hover {
-    background: #252525;
-    transform: translateX(10px);
-}
-
-.selected-exercise {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 10px 0;
-    padding: 10px;
-    background: #1a1a1a;
-    border-radius: 8px;
-}
-
 /* Main App Styles */
 .navbar {
     position: fixed;
@@ -102,22 +57,6 @@ body {
     justify-content: space-around;
 }
 
-.nav-btn {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 1.5rem;
-    padding: 10px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.nav-btn:hover {
-    transform: translateY(-5px);
-    color: #00ff88;
-}
-
-/* Hero Card */
 .hero-card {
     background: rgba(0,0,0,0.7);
     border-radius: 15px;
@@ -126,32 +65,12 @@ body {
     backdrop-filter: blur(10px);
 }
 
-.hero-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1rem;
-    margin: 2rem 0;
-}
-
-.stat-item {
-    background: linear-gradient(45deg, #1a1a1a, #252525);
-    padding: 1.5rem;
-    border-radius: 10px;
-    text-align: center;
-    transition: transform 0.3s;
-}
-
-.stat-item:hover {
-    transform: scale(1.05);
-}
-
-.constellation-card {
-    background: linear-gradient(45deg, #2a2a2a, #1a1a1a);
-    padding: 1.5rem;
-    border-radius: 10px;
-    margin-top: 2rem;
-    animation: glow 2s infinite alternate;
-}
+/* Rarity Colors */
+.rarity-common { color: #3498db; }
+.rarity-rare { color: #2ecc71; }
+.rarity-epic { color: #9b59b6; }
+.rarity-legendary { color: #f1c40f; }
+.rarity-mythical { color: #e74c3c; }
 
 /* Animations */
 @keyframes glow {
@@ -171,33 +90,11 @@ body {
     z-index: -1;
 }
 
-@keyframes gradient {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-/* Rarity Colors */
-.rarity-common { color: #808080; }
-.rarity-rare { color: #FFA500; }
-.rarity-epic { color: #87CEEB; }
-.rarity-legendary { color: #FFD700; }
-.rarity-mythical { color: #800080; }
-
-.glow-btn {
-    background: #00ff88;
-    color: #1a1a1a;
-    padding: 1rem 2rem;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s;
-    width: 100%;
-    margin-top: 1rem;
-}
-
-.glow-btn:hover {
-    box-shadow: 0 0 20px rgba(0,255,136,0.6);
-    transform: scale(1.05);
+/* Quest Board */
+.quest-card {
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 1rem;
+    margin: 1rem 0;
+    backdrop-filter: blur(5px);
 }
