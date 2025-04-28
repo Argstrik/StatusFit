@@ -340,3 +340,33 @@ window.onload = () => {
     filterExercises();
     updateLeaderboard();
 };
+// Add this to your app.js
+function filterExercises() {
+    const searchTerm = document.getElementById('exercise-search').value.toLowerCase();
+    const exerciseList = document.getElementById('exercise-list');
+    
+    // Clear previous results
+    exerciseList.innerHTML = '';
+
+    // Filter and display exercises
+    Object.entries(EXERCISE_DB).forEach(([name, details]) => {
+        if(name.toLowerCase().includes(searchTerm)) {
+            const exerciseItem = document.createElement('div');
+            exerciseItem.className = 'exercise-item';
+            exerciseItem.innerHTML = `
+                <i class="fas fa-plus-circle"></i> ${name}
+                <span class="exercise-type ${details.type}">
+                    ${details.type.toUpperCase()}
+                </span>
+            `;
+            exerciseItem.onclick = () => addExercise(name);
+            exerciseList.appendChild(exerciseItem);
+        }
+    });
+}
+
+// Initialize search on page load
+document.addEventListener('DOMContentLoaded', () => {
+    filterExercises(); // Show all exercises initially
+    document.getElementById('exercise-search').addEventListener('input', filterExercises);
+});
