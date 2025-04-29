@@ -1,6 +1,5 @@
-// app.js
 const EXERCISE_DB = {
-    // Strength Exercises (25)
+    // ... (Same 120+ exercises from previous examples)
     "Push-Ups": { type: 'strength', multiplier: 1.2 },
     "Pull-Ups": { type: 'strength', multiplier: 2.0 },
     "Muscle-Ups": { type: 'strength', multiplier: 3.0 },
@@ -63,40 +62,11 @@ const EXERCISE_DB = {
     "Stair Running": { type: 'endurance', multiplier: 1.3 },
     "Rope Climbs": { type: 'endurance', multiplier: 1.4 },
     "Sandbag Carry": { type: 'endurance', multiplier: 1.0 }
+
 };
 
-class User {
-    constructor(name, weight) {
-        this.name = name;
-        this.weight = weight;
-        this.stats = {
-            strength: 0,
-            agility: 0,
-            core: 0,
-            endurance: 0,
-            totalPower: 0
-        };
-        this.constellation = { name: "New Hero", rarity: "common" };
-        this.quests = [];
-        this.achievements = [];
-        this.history = [];
-        this.rank = 0;
-        this.level = 1;
-        this.xp = 0;
-        this.joinDate = new Date().toISOString();
-    }
-
-    calculateTotalPower() {
-        this.stats.totalPower = Math.round(
-            this.stats.strength * 0.4 +
-            this.stats.agility * 0.3 +
-            this.stats.core * 0.2 +
-            this.stats.endurance * 0.1
-        );
-    }
-}
-
 const CONSTELLATIONS = {
+    // ... (Same constellation tiers from previous examples)
     strength: [
         { name: "Common: Midoriya Izuku", rarity: 'common', threshold: 0 },
         { name: "Rare: Jonathan Joestar", rarity: 'rare', threshold: 100 },
@@ -127,87 +97,140 @@ const CONSTELLATIONS = {
     ]
 };
 
+class User {
+    constructor(name, password, weight) {
+        this.name = name;
+        this.password = password;
+        this.weight = weight;
+        this.stats = {
+            strength: 0,
+            agility: 0,
+            core: 0,
+            endurance: 0,
+            totalPower: 0
+        };
+        this.constellation = { name: "New Hero", rarity: "common" };
+        this.quests = [];
+        this.achievements = [];
+        this.history = [];
+        this.exercises = {};
+        this.rank = 0;
+        this.level = 1;
+        this.xp = 0;
+        this.joinDate = new Date().toISOString();
+    }
+
+    calculateTotalPower() {
+        this.stats.totalPower = Math.round(
+            this.stats.strength * 0.4 +
+            this.stats.agility * 0.3 +
+            this.stats.core * 0.2 +
+            this.stats.endurance * 0.1
+        );
+    }
+}
+
 let allUsers = JSON.parse(localStorage.getItem('animefitUsers')) || [];
 let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
 let progressChart = null;
 
+// Authentication
+function login() {
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const user = allUsers.find(u => u.name === username && u.password === password);
+    
+    if (!user) return alert("Invalid credentials!");
+    currentUser = user;
+    initializeApp();
+}
+
+function signup() {
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const weight = parseInt(document.getElementById('weight').value);
+    
+    if (!username || !password || isNaN(weight)) return alert("Invalid inputs!");
+    if (allUsers.some(u => u.name === username)) return alert("Username exists!");
+    
+    currentUser = new User(username, password, weight);
+    allUsers.push(currentUser);
+    initializeApp();
+}
+
 // Core Functions
-function saveData() {
-    localStorage.setItem('animefitUsers', JSON.stringify(allUsers));
-    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+function initializeApp() {
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('user-name').textContent = currentUser.name;
+    
+    calculateStats();
+    generateDailyQuests();
+    updateLeaderboard();
+    initializeProgressChart();
+    saveData();
 }
 
 function calculateStats() {
-    if (!currentUser) return;
-
-    // Reset stats
-    currentUser.stats = { strength: 0, agility: 0, core: 0, endurance: 0, totalPower: 0 };
-
-    // Calculate new stats
+    currentUser.stats = { strength: 0, agility: 0, core: 0, endurance: 0 };
+    
     Object.entries(currentUser.exercises).forEach(([exercise, reps]) => {
         const details = EXERCISE_DB[exercise];
         if (details) currentUser.stats[details.type] += reps * details.multiplier;
     });
-
-    // Update derived values
+    
     currentUser.calculateTotalPower();
     assignConstellation();
-    updateLeaderboard();
     updateUI();
-    saveData();
 }
 
 function assignConstellation() {
-    const stats = currentUser.stats;
-    const maxStat = Math.max(stats.strength, stats.agility, stats.core, stats.endurance);
-    const maxStatType = Object.keys(stats).find(key => stats[key] === maxStat);
-
+    const maxStat = Math.max(...Object.values(currentUser.stats));
+    const maxStatType = Object.keys(currentUser.stats).find(k => currentUser.stats[k] === maxStat);
+    
     currentUser.constellation = CONSTELLATIONS[maxStatType]
-        .slice()
         .reverse()
         .find(c => maxStat >= c.threshold) || { name: "New Hero", rarity: "common" };
-
+    
     updateTheme();
 }
 
 // UI Functions
 function updateUI() {
     // Update Stats
-    document.getElementById('strength').textContent = Math.round(currentUser.stats.strength);
-    document.getElementById('agility').textContent = Math.round(currentUser.stats.agility);
-    document.getElementById('core').textContent = Math.round(currentUser.stats.core);
-    document.getElementById('endurance').textContent = Math.round(currentUser.stats.endurance);
+    document.getElementById('hero-stats').innerHTML = Object.entries(currentUser.stats)
+        .filter(([key]) => key !== 'totalPower')
+        .map(([stat, value]) => `
+            <div class="stat-item">
+                <i class="fas fa-${getStatIcon(stat)}"></i>
+                <h3>${stat} <span>${Math.round(value)}</span></h3>
+            </div>
+        `).join('');
     
-    // Update Constellation Display
-    const constellationElement = document.getElementById('constellation');
-    constellationElement.innerHTML = `
-        <i class="fas fa-star"></i> Constellation: 
-        <span class="constellation-name rarity-${currentUser.constellation.rarity}">
-            ${currentUser.constellation.name}
-        </span>
-        <div class="rarity-badge rarity-${currentUser.constellation.rarity}">
+    // Update Constellation
+    document.getElementById('constellation').innerHTML = `
+        <i class="fas fa-star"></i> 
+        ${currentUser.constellation.name}
+        <div class="rarity-${currentUser.constellation.rarity}">
             ${currentUser.constellation.rarity.toUpperCase()}
         </div>
     `;
-
+    
     // Update Rank
     document.getElementById('global-rank').textContent = currentUser.rank;
 }
 
-function updateTheme() {
-    const themes = {
-        common: ['#3498db', '#2c3e50'],
-        rare: ['#2ecc71', '#27ae60'],
-        epic: ['#9b59b6', '#8e44ad'],
-        legendary: ['#f1c40f', '#f39c12'],
-        mythical: ['#e74c3c', '#c0392b']
+function getStatIcon(stat) {
+    const icons = {
+        strength: 'dumbbell',
+        agility: 'bolt',
+        core: 'shield-alt',
+        endurance: 'infinity'
     };
-
-    const [primary, secondary] = themes[currentUser.constellation.rarity];
-    document.documentElement.style.setProperty('--primary-color', primary);
-    document.documentElement.style.setProperty('--secondary-color', secondary);
+    return icons[stat];
 }
 
+// ... (Rest of the code for quests, leaderboard, progress chart from previous examples)
 // Exercise System
 function filterExercises() {
     const searchTerm = document.getElementById('exercise-search').value.toLowerCase();
@@ -302,66 +325,11 @@ function updateLeaderboard() {
     saveData();
 }
 
+
 // Initialization
-function initializeProgressChart() {
-    const ctx = document.getElementById('progress-chart').getContext('2d');
-    progressChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-            datasets: [
-                { label: 'Strength', data: [], borderColor: '#FF6B6B' },
-                { label: 'Agility', data: [], borderColor: '#4ECDC4' },
-                { label: 'Core', data: [], borderColor: '#45B7D1' },
-                { label: 'Endurance', data: [], borderColor: '#96CEB4' }
-            ]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { position: 'bottom' },
-                title: { display: true, text: 'Monthly Progress' }
-            }
-        }
-    });
-}
-
-function signup() {
-    const username = document.getElementById('username').value.trim();
-    const weight = parseInt(document.getElementById('weight').value);
-
-    if (!username || isNaN(weight)) {
-        alert("Please enter valid name and weight!");
-        return;
+window.onload = () => {
+    if (localStorage.getItem('currentUser')) {
+        currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        initializeApp();
     }
-
-    currentUser = new User(username, weight);
-    allUsers.push(currentUser);
-    
-    document.getElementById('auth-screen').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    document.getElementById('user-name').textContent = username;
-    
-    calculateStats();
-    generateDailyQuests();
-    saveData();
-}
-
-// Event Listeners
-document.addEventListener('DOMContentLoaded', () => {
-    initializeProgressChart();
-    document.getElementById('exercise-search').addEventListener('input', filterExercises);
-    
-    if (currentUser) {
-        document.getElementById('auth-screen').style.display = 'none';
-        document.getElementById('app').style.display = 'block';
-        document.getElementById('user-name').textContent = currentUser.name;
-        calculateStats();
-        updateUI();
-    }
-});
-
-function showTab(tabId) {
-    document.querySelectorAll('.tab').forEach(tab => tab.style.display = 'none');
-    document.getElementById(tabId).style.display = 'block';
-  }
+};
