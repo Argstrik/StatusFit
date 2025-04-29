@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,22 +13,17 @@
             <h1><i class="fas fa-dragon"></i> AnimeFit RPG</h1>
             <div class="input-group">
                 <input type="text" id="username" placeholder="Your Hero Name">
+                <input type="password" id="password" placeholder="Password">
                 <input type="number" id="weight" placeholder="Weight (kg)">
             </div>
-            
-            <div class="exercise-selector">
-                <h3><i class="fas fa-dumbbell"></i> Your Powers</h3>
-                <div class="search-box">
-                    <input type="text" id="exercise-search" placeholder="Search moves...">
-                    <i class="fas fa-search"></i>
-                </div>
-                <div id="exercise-list"></div>
-                <div id="selected-exercises"></div>
+            <div class="auth-buttons">
+                <button class="glow-btn" onclick="signup()">
+                    <i class="fas fa-fist-raised"></i> Sign Up
+                </button>
+                <button class="glow-btn" onclick="login()">
+                    <i class="fas fa-sign-in-alt"></i> Log In
+                </button>
             </div>
-
-            <button class="glow-btn" onclick="signup()">
-                <i class="fas fa-fist-raised"></i> Begin Training
-            </button>
         </div>
     </div>
 
@@ -49,15 +43,11 @@
         <div id="status" class="tab">
             <div class="hero-card">
                 <div class="hero-header">
-                    <h1 id="user-name">Loading...</h1>
-                    <div class="rarity-badge" id="rarity-badge">Common</div>
+                    <h1 id="user-name"></h1>
+                    <div class="rarity-badge" id="rarity-badge"></div>
                 </div>
-                <div class="hero-stats">
-                    <!-- Stats will be populated by JS -->
-                </div>
-                <div class="constellation-card" id="constellation">
-                    <i class="fas fa-star"></i> Constellation: Calculating...
-                </div>
+                <div class="hero-stats" id="hero-stats"></div>
+                <div class="constellation-card" id="constellation"></div>
                 <div class="rank-display">
                     <i class="fas fa-trophy"></i> Global Rank: <span id="global-rank">-</span>
                 </div>
